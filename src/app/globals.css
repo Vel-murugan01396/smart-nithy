@@ -2,14 +2,26 @@
 
 /* ================= PRINT FIX ================= */
 
+/* ================== PRINT ONLY INVOICE ================== */
+
+@page {
+  size: A4;
+  margin: 10mm;
+}
+
 @media print {
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
   body * {
-    visibility: hidden;
+    visibility: hidden !important;
   }
 
   #print-invoice,
   #print-invoice * {
-    visibility: visible;
+    visibility: visible !important;
   }
 
   #print-invoice {
@@ -19,9 +31,7 @@
     width: 100%;
   }
 
-  table,
-  tr,
-  td {
+  table, tr, td {
     page-break-inside: avoid;
   }
 }
