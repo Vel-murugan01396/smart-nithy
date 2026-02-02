@@ -1,37 +1,112 @@
 @import "tailwindcss";
 
 
+/* Invoice Page */
+.invoice-page {
+  background: #ffffff;
+  padding: 30px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.invoice-container {
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000;
+}
+
+/* Header */
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.invoice-header h1 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.invoice-header p {
+  font-size: 12px;
+  color: #333;
+}
+
+.close-btn {
+  font-size: 18px;
+  color: red;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* Table */
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.invoice-table th {
+  border-bottom: 1px solid #000;
+  padding-bottom: 6px;
+}
+
+.invoice-table td {
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Total */
+.grand-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* QR Box */
+.qr-box {
+  border: 1px solid #000;
+  margin-top: 20px;
+  padding: 16px;
+  text-align: center;
+}
+
+.qr-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.qr-note {
+  font-size: 11px;
+  margin-top: 8px;
+  color: #444;
+}
+
+/* Print link */
+.print-link {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Print Styles */
 @media print {
-  body {
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Remove dark background & fixed layout */
-  .print-overlay {
-    position: static !important;
-    background: transparent !important;
-  }
-
-  /* Allow content to flow across pages */
-  .print-container {
-    max-height: none !important;
-    overflow: visible !important;
-    width: 100% !important;
-  }
-
-  /* Hide buttons while printing */
   .no-print {
     display: none !important;
   }
 
-  /* Table page-break fix */
-  table {
-    page-break-inside: auto;
-  }
-
-  tr {
-    page-break-inside: avoid;
-    page-break-after: auto;
+  body {
+    margin: 0;
+    padding: 0;
   }
 }
+
