@@ -1,110 +1,183 @@
-
-
 "use client";
+import React from "react";
 import { useCart } from "@/context/CartContext";
 import { QRCodeCanvas } from "qrcode.react";
 
+/* -------------------------------
+   RANDOM CUSTOMER NAME GENERATOR
+-------------------------------- */
+const getRandomCustomerName = () => {
+  const firstNames = [
+    "Arun",
+    "Karthik",
+    "Ravi",
+    "Suresh",
+    "Vijay",
+    "Ajith",
+    "Prakash",
+    "Manoj",
+    "Rahul",
+    "Deepak",
+  ];
+
+  const lastNames = [
+    "Kumar",
+    "Sharma",
+    "Singh",
+    "Iyer",
+    "Reddy",
+    "Patel",
+    "Gupta",
+    "Mehta",
+    "Nair",
+    "Das",
+  ];
+
+  const first =
+    firstNames[Math.floor(Math.random() * firstNames.length)];
+  const last =
+    lastNames[Math.floor(Math.random() * lastNames.length)];
+
+  return `${first} ${last}`;
+};
+
+/* -------------------------------
+   COMPONENT
+-------------------------------- */
 export default function InvoicePreview() {
   const { cart, total, showInvoice, setShowInvoice } = useCart();
-
   if (!showInvoice) return null;
 
-  const invoiceNo = `INV-${Date.now()}`;
+  // 🔹 RANDOM CUSTOMER (STABLE PER INVOICE)
+  const customerName = React.useMemo(
+    () => getRandomCustomerName(),
+    []
+  );
+
+  // 🔹 AUTO GST NUMBER
+  const customerGST = React.useMemo(
+    () =>
+      `33ABCDE${Math.floor(1000 + Math.random() * 9000)}F1Z5`,
+    []
+  );
+
+  const invoiceNo = React.useMemo(
+    () => `INV-${Date.now()}`,
+    []
+  );
+
   const date = new Date().toLocaleDateString();
 
-  // 🔑 CHANGE THIS TO YOUR REAL UPI ID
-  const upiId = "kingvel136@okicici"; // eg: velmurugan@okicici
+  // 🔹 GST CALCULATION
+  const GST_PERCENT = 18;
+  const gstAmount = (total * GST_PERCENT) / 100;
+  const grandTotal = total + gstAmount;
+
+  // 🔹 UPI DETAILS
+  const upiId = "kingvel136@okicici";
   const payeeName = "My Store";
 
   const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(
     payeeName
-  )}&am=${total}&cu=INR`;
+  )}&am=${grandTotal.toFixed(2)}&cu=INR`;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-      <div className="bg-white w-full max-w-lg p-6 rounded">
+    <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
 
-        {/* Header */}
-        <div className="flex justify-between mb-4">
+      {/* MODAL */}
+      <div className="bg-white w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh] overflow-y-auto rounded-t-xl sm:rounded-xl p-4 sm:p-6">
+
+        {/* HEADER */}
+        <div className="flex justify-between items-start mb-4">
           <div>
-            <h2 className="font-bold text-xl">Invoice</h2>
-            <p className="text-sm">Invoice No: {invoiceNo}</p>
-            <p className="text-sm">Date: {date}</p>
+            <h2 className="font-bold text-lg sm:text-xl">
+              Tax Invoice
+            </h2>
+            <p className="text-xs sm:text-sm">
+              Invoice No: {invoiceNo}
+            </p>
+            <p className="text-xs sm:text-sm">Date: {date}</p>
           </div>
 
           <button
             onClick={() => setShowInvoice(false)}
-            className="text-red-500 text-xl"
+            className="text-red-500 text-2xl sm:text-xl print:hidden"
           >
             ✕
           </button>
         </div>
 
-        {/* Items */}
-        <table className="w-full text-sm mb-4">
-          <thead>
-            <tr className="border-b">
-              <th className="text-left py-2">Item</th>
-              <th>Qty</th>
-              <th>Price</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cart.map((item) => (
-              <tr key={item.id} className="border-b">
-                <td className="py-2">{item.title}</td>
-                <td className="text-center">{item.qty}</td>
-                <td className="text-center">₹{item.price}</td>
-                <td className="text-center">
-                  ₹{item.price * item.qty}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Total */}
-        <div className="flex justify-between font-bold mb-4">
-          <span>Grand Total</span>
-          <span>₹{total}</span>
+        {/* CUSTOMER DETAILS */}
+        <div className="border rounded p-3 mb-4 text-xs sm:text-sm">
+          <p>
+            <strong>Customer:</strong> {customerName}
+          </p>
+          <p>
+            <strong>GST No:</strong> {customerGST}
+          </p>
         </div>
 
-        {/* 🔥 QR PAYMENT SECTION */}
-        {/* <div className="border rounded p-4 text-center mb-4">
-          <p className="font-semibold mb-2">Scan to Pay</p>
+        {/* ITEMS */}
+        <div className="overflow-x-auto mb-4">
+          <table className="min-w-full text-xs sm:text-sm border">
+            <thead>
+              <tr className="border-b bg-gray-100">
+                <th className="text-left px-2 py-2">Item</th>
+                <th className="text-center">Qty</th>
+                <th className="text-center">Price</th>
+                <th className="text-center">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cart.map((item) => (
+                <tr key={item.id} className="border-b">
+                  <td className="px-2 py-2">{item.title}</td>
+                  <td className="text-center">{item.qty}</td>
+                  <td className="text-center">₹{item.price}</td>
+                  <td className="text-center">
+                    ₹{item.price * item.qty}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-          <QRCodeCanvas
-            value={upiUrl}
-            size={180}
-            level="H"
-          />
+        {/* TOTALS */}
+        <div className="text-sm sm:text-base space-y-2 mb-4">
+          <div className="flex justify-between">
+            <span>Subtotal</span>
+            <span>₹{total.toFixed(2)}</span>
+          </div>
 
-          <p className="text-xs text-gray-500 mt-2">
-            Pay using any UPI app (GPay / PhonePe / Paytm)
+          <div className="flex justify-between">
+            <span>GST (18%)</span>
+            <span>₹{gstAmount.toFixed(2)}</span>
+          </div>
+
+          <div className="flex justify-between font-bold border-t pt-2">
+            <span>Grand Total</span>
+            <span>₹{grandTotal.toFixed(2)}</span>
+          </div>
+        </div>
+
+        {/* QR PAYMENT */}
+        <div className="border rounded p-4 mb-4 flex flex-col items-center text-center">
+          <p className="font-semibold mb-3 text-sm sm:text-base">
+            Scan to Pay
           </p>
-        </div> */}
-        <div className="border rounded p-4 mb-4 flex flex-col items-center justify-center text-center">
-  <p className="font-semibold mb-3">Scan to Pay</p>
 
-  <div className="flex justify-center items-center">
-    <QRCodeCanvas
-      value={upiUrl}
-      size={180}
-      level="H"
-    />
-  </div>
+          <QRCodeCanvas value={upiUrl} size={180} />
 
-  <p className="text-xs text-gray-500 mt-3">
-    Pay using any UPI app (GPay / PhonePe / Paytm)
-  </p>
-</div>
+          <p className="text-xs text-gray-500 mt-3">
+            Pay using any UPI app
+          </p>
+        </div>
 
-
-        {/* Actions */}
+        {/* ACTION */}
         <button
           onClick={() => window.print()}
-          className="w-full bg-black text-white py-2 rounded"
+          className="w-full bg-black text-white py-3 rounded text-sm sm:text-base print:hidden"
         >
           Print / Download Invoice
         </button>
