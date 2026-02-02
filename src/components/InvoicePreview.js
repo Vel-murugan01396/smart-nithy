@@ -121,76 +121,101 @@ export default function InvoicePreview() {
   )}&am=${total}&cu=INR`;
 
   return (
-    <div className="invoice-page">
+    <>
+      {/* SCREEN VIEW */}
+      <div className="invoice-wrapper no-print">
+        <div className="invoice-box">
 
-      <div className="invoice-container">
+          <h2>Invoice</h2>
+          <p>Invoice No: {invoiceNo}</p>
+          <p>Date: {date}</p>
 
-        {/* Header */}
-        <div className="invoice-header">
-          <div>
-            <h1>Invoice</h1>
-            <p>Invoice No: {invoiceNo}</p>
-            <p>Date: {date}</p>
+          <table className="invoice-table">
+            <thead>
+              <tr>
+                <th align="left">Item</th>
+                <th>Qty</th>
+                <th align="right">Price</th>
+                <th align="right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cart.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.title}</td>
+                  <td align="center">{item.qty}</td>
+                  <td align="right">₹{item.price}</td>
+                  <td align="right">₹{item.price * item.qty}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="total">
+            <span>Grand Total</span>
+            <span>₹{total}</span>
           </div>
 
-          <button
-            onClick={() => setShowInvoice(false)}
-            className="close-btn no-print"
-          >
-            ✕
-          </button>
+          <div className="qr-box">
+            <p><strong>Scan to Pay</strong></p>
+            <QRCodeCanvas value={upiUrl} size={150} />
+          </div>
+
+          <div className="actions">
+            <button onClick={() => window.print()}>
+              Print Invoice
+            </button>
+
+            <button onClick={() => setShowInvoice(false)}>
+              Close
+            </button>
+          </div>
+
         </div>
-
-        {/* Items Table */}
-        <table className="invoice-table">
-          <thead>
-            <tr>
-              <th align="left">Item</th>
-              <th align="center">Qty</th>
-              <th align="right">Price</th>
-              <th align="right">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cart.map((item) => (
-              <tr key={item.id}>
-                <td>{item.title}</td>
-                <td align="center">{item.qty}</td>
-                <td align="right">₹{item.price}</td>
-                <td align="right">₹{item.price * item.qty}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Grand Total */}
-        <div className="grand-total">
-          <span>Grand Total</span>
-          <span>₹{total}</span>
-        </div>
-
-        {/* QR Section */}
-        <div className="qr-box">
-          <p className="qr-title">Scan to Pay</p>
-
-          <QRCodeCanvas value={upiUrl} size={160} />
-
-          <p className="qr-note">
-            Pay using any UPI app (GPay / PhonePe / Paytm)
-          </p>
-        </div>
-
-        {/* Print */}
-        <p
-          onClick={() => window.print()}
-          className="print-link no-print"
-        >
-          Print / Download Invoice
-        </p>
-
       </div>
-    </div>
+
+      {/* PRINT VIEW (ONLY THIS PRINTS) */}
+      <div className="print-only">
+        <div className="invoice-box">
+          <h2>Invoice</h2>
+          <p>Invoice No: {invoiceNo}</p>
+          <p>Date: {date}</p>
+
+          <table className="invoice-table">
+            <thead>
+              <tr>
+                <th align="left">Item</th>
+                <th>Qty</th>
+                <th align="right">Price</th>
+                <th align="right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cart.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.title}</td>
+                  <td align="center">{item.qty}</td>
+                  <td align="right">₹{item.price}</td>
+                  <td align="right">₹{item.price * item.qty}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="total">
+            <span>Grand Total</span>
+            <span>₹{total}</span>
+          </div>
+
+          <div className="qr-box">
+            <p><strong>Scan to Pay</strong></p>
+            <QRCodeCanvas value={upiUrl} size={150} />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
+
 
 
