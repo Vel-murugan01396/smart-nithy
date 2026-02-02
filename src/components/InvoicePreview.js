@@ -113,7 +113,6 @@ export default function InvoicePreview() {
   const invoiceNo = `INV-${Date.now()}`;
   const date = new Date().toLocaleDateString();
 
-  // 🔑 Your UPI Details
   const upiId = "kingvel136@okicici";
   const payeeName = "My Store";
 
@@ -122,77 +121,73 @@ export default function InvoicePreview() {
   )}&am=${total}&cu=INR`;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 print-overlay">
-      <div className="bg-white w-full max-w-lg p-6 rounded print-container">
+    <div className="invoice-page">
+
+      <div className="invoice-container">
 
         {/* Header */}
-        <div className="flex justify-between mb-4">
+        <div className="invoice-header">
           <div>
-            <h2 className="font-bold text-xl">Invoice</h2>
-            <p className="text-sm">Invoice No: {invoiceNo}</p>
-            <p className="text-sm">Date: {date}</p>
+            <h1>Invoice</h1>
+            <p>Invoice No: {invoiceNo}</p>
+            <p>Date: {date}</p>
           </div>
 
           <button
             onClick={() => setShowInvoice(false)}
-            className="text-red-500 text-xl no-print"
+            className="close-btn no-print"
           >
             ✕
           </button>
         </div>
 
-        {/* Items */}
-        <table className="w-full text-sm mb-4 border-collapse">
+        {/* Items Table */}
+        <table className="invoice-table">
           <thead>
-            <tr className="border-b">
-              <th className="text-left py-2">Item</th>
-              <th className="text-center">Qty</th>
-              <th className="text-center">Price</th>
-              <th className="text-center">Total</th>
+            <tr>
+              <th align="left">Item</th>
+              <th align="center">Qty</th>
+              <th align="right">Price</th>
+              <th align="right">Total</th>
             </tr>
           </thead>
           <tbody>
             {cart.map((item) => (
-              <tr key={item.id} className="border-b">
-                <td className="py-2">{item.title}</td>
-                <td className="text-center">{item.qty}</td>
-                <td className="text-center">₹{item.price}</td>
-                <td className="text-center">
-                  ₹{item.price * item.qty}
-                </td>
+              <tr key={item.id}>
+                <td>{item.title}</td>
+                <td align="center">{item.qty}</td>
+                <td align="right">₹{item.price}</td>
+                <td align="right">₹{item.price * item.qty}</td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {/* Total */}
-        <div className="flex justify-between font-bold mb-4">
+        {/* Grand Total */}
+        <div className="grand-total">
           <span>Grand Total</span>
           <span>₹{total}</span>
         </div>
 
-        {/* QR Code */}
-        <div className="border rounded p-4 mb-4 flex flex-col items-center text-center">
-          <p className="font-semibold mb-3">Scan to Pay</p>
+        {/* QR Section */}
+        <div className="qr-box">
+          <p className="qr-title">Scan to Pay</p>
 
-          <QRCodeCanvas
-            value={upiUrl}
-            size={180}
-            level="H"
-          />
+          <QRCodeCanvas value={upiUrl} size={160} />
 
-          <p className="text-xs text-gray-500 mt-3">
+          <p className="qr-note">
             Pay using any UPI app (GPay / PhonePe / Paytm)
           </p>
         </div>
 
-        {/* Actions */}
-        <button
+        {/* Print */}
+        <p
           onClick={() => window.print()}
-          className="w-full bg-black text-white py-2 rounded no-print"
+          className="print-link no-print"
         >
           Print / Download Invoice
-        </button>
+        </p>
+
       </div>
     </div>
   );

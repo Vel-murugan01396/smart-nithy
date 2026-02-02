@@ -1,3 +1,37 @@
 @import "tailwindcss";
 
 
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Remove dark background & fixed layout */
+  .print-overlay {
+    position: static !important;
+    background: transparent !important;
+  }
+
+  /* Allow content to flow across pages */
+  .print-container {
+    max-height: none !important;
+    overflow: visible !important;
+    width: 100% !important;
+  }
+
+  /* Hide buttons while printing */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Table page-break fix */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+}
