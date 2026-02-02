@@ -126,8 +126,7 @@ export default function InvoicePreview() {
   const invoiceNo = `INV-${Date.now()}`;
   const date = new Date().toLocaleDateString();
 
-  // 🔴 CHANGE TO YOUR REAL UPI ID
-  const upiId = "kingvel136@okicici";
+  const upiId = "yourupi@bank"; // CHANGE THIS
   const payeeName = "My Store";
 
   const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(
@@ -135,30 +134,30 @@ export default function InvoicePreview() {
   )}&am=${total}&cu=INR`;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-      {/* PRINTABLE AREA */}
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+      {/* 👇 ONLY THIS WILL PRINT */}
       <div
         id="print-invoice"
-        className="bg-white w-full max-w-lg p-6 rounded"
+        className="bg-white w-[210mm] min-h-[297mm] p-6"
       >
         {/* HEADER */}
         <div className="flex justify-between mb-4">
           <div>
-            <h2 className="font-bold text-xl">Invoice</h2>
+            <h1 className="text-xl font-bold">Invoice</h1>
             <p className="text-sm">Invoice No: {invoiceNo}</p>
             <p className="text-sm">Date: {date}</p>
           </div>
 
           <button
             onClick={() => setShowInvoice(false)}
-            className="text-red-500 text-xl print:hidden"
+            className="text-red-500 print:hidden"
           >
             ✕
           </button>
         </div>
 
-        {/* ITEMS */}
-        <table className="w-full text-sm mb-4 border-collapse">
+        {/* TABLE */}
+        <table className="w-full text-sm border-collapse mb-4">
           <thead>
             <tr className="border-b">
               <th className="text-left py-2">Item</th>
@@ -182,21 +181,21 @@ export default function InvoicePreview() {
         </table>
 
         {/* TOTAL */}
-        <div className="flex justify-between font-bold mb-4">
+        <div className="flex justify-between font-bold mb-6">
           <span>Grand Total</span>
           <span>₹{total}</span>
         </div>
 
-        {/* QR PAYMENT */}
-        <div className="border rounded p-4 mb-4 flex flex-col items-center justify-center text-center">
-          <p className="font-semibold mb-3">Scan to Pay</p>
+        {/* QR */}
+        <div className="border p-4 text-center mb-6">
+          <p className="font-semibold mb-2">Scan to Pay</p>
 
-          <div className="bg-gray-50 p-3 rounded-lg">
-            <QRCodeCanvas value={upiUrl} size={180} level="H" />
+          <div className="flex justify-center">
+            <QRCodeCanvas value={upiUrl} size={160} />
           </div>
 
-          <p className="text-xs text-gray-500 mt-3">
-            Pay using any UPI app (GPay / PhonePe / Paytm)
+          <p className="text-xs text-gray-500 mt-2">
+            Pay using any UPI app
           </p>
         </div>
 
@@ -211,3 +210,4 @@ export default function InvoicePreview() {
     </div>
   );
 }
+
