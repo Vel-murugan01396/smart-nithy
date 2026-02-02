@@ -257,11 +257,21 @@ export default function InvoicePreview() {
   )}&am=${grandTotal.toFixed(2)}&cu=INR`;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center">
-      
-      {/* CARD */}
-      <div className="bg-white w-full sm:max-w-lg h-[95vh] sm:h-auto overflow-y-auto rounded-t-xl sm:rounded-xl p-4 sm:p-6">
+    <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
 
+      {/* MODAL */}
+      <div
+        className="
+          bg-white w-full 
+          sm:max-w-lg 
+          md:max-w-xl 
+          lg:max-w-2xl
+          max-h-[90vh]
+          overflow-y-auto
+          rounded-t-xl sm:rounded-xl
+          p-4 sm:p-6
+        "
+      >
         {/* HEADER */}
         <div className="flex justify-between items-start mb-4">
           <div>
@@ -284,15 +294,15 @@ export default function InvoicePreview() {
           <p><strong>GST No:</strong> {customerGST}</p>
         </div>
 
-        {/* ITEMS (SCROLLABLE ON MOBILE) */}
+        {/* ITEMS */}
         <div className="overflow-x-auto mb-4">
-          <table className="min-w-[420px] w-full text-xs sm:text-sm border">
+          <table className="min-w-full text-xs sm:text-sm border">
             <thead>
               <tr className="border-b bg-gray-100">
                 <th className="text-left px-2 py-2">Item</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
+                <th className="text-center">Qty</th>
+                <th className="text-center">Price</th>
+                <th className="text-center">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -334,11 +344,7 @@ export default function InvoicePreview() {
             Scan to Pay
           </p>
 
-          <QRCodeCanvas
-            value={upiUrl}
-            size={160}
-            className="sm:!w-[180px] sm:!h-[180px]"
-          />
+          <QRCodeCanvas value={upiUrl} size={180} />
 
           <p className="text-xs text-gray-500 mt-3">
             Pay using any UPI app
@@ -356,6 +362,7 @@ export default function InvoicePreview() {
     </div>
   );
 }
+
 
 
 
