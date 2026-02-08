@@ -237,72 +237,35 @@
 
 
 "use client";
-import React from "react";
+import React,{useEffect,useState} from "react";
 import { useCart } from "@/context/CartContext";
 import { QRCodeCanvas } from "qrcode.react";
 
-/* -------------------------------
-   RANDOM CUSTOMER NAME GENERATOR
--------------------------------- */
-const getRandomCustomerName = () => {
-  const firstNames = [
-    "Arun",
-    "Karthik",
-    "Ravi",
-    "Suresh",
-    "Vijay",
-    "Ajith",
-    "Prakash",
-    "Manoj",
-    "Rahul",
-    "Deepak",
-  ];
 
-  const lastNames = [
-    "Kumar",
-    "Sharma",
-    "Singh",
-    "Iyer",
-    "Reddy",
-    "Patel",
-    "Gupta",
-    "Mehta",
-    "Nair",
-    "Das",
-  ];
-
-  const first =
-    firstNames[Math.floor(Math.random() * firstNames.length)];
-  const last =
-    lastNames[Math.floor(Math.random() * lastNames.length)];
-
-  return `${first} ${last}`;
-};
-
-/* -------------------------------
-   COMPONENT
--------------------------------- */
 export default function InvoicePreview() {
   const { cart, total, showInvoice, setShowInvoice } = useCart();
+   const [invoice, setInvoice] = useState(null);
+
+ useEffect(() => {
+    if (!showInvoice) return; // 👈 guard INSIDE effect
+
+    const fetchingData = async () => {
+      try {
+        const res = await fetch("/api/invoice");
+        const data = await res.json();
+        setInvoice(data); 
+        console.log("INVOICE DATA 👉", data);
+      } catch (error) {
+        console.log("FETCH ERROR ❌", error);
+      }
+    };
+
+    fetchingData();
+  }, [showInvoice]);
+
+  // ✅ conditional render AFTER hooks
   if (!showInvoice) return null;
 
-  // 🔹 RANDOM CUSTOMER (STABLE PER INVOICE)
-  const customerName = React.useMemo(
-    () => getRandomCustomerName(),
-    []
-  );
-
-  // 🔹 AUTO GST NUMBER
-  const customerGST = React.useMemo(
-    () =>
-      `33ABCDE${Math.floor(1000 + Math.random() * 9000)}F1Z5`,
-    []
-  );
-
-  const invoiceNo = React.useMemo(
-    () => `INV-${Date.now()}`,
-    []
-  );
 
   const date = new Date().toLocaleDateString();
 
@@ -332,7 +295,7 @@ export default function InvoicePreview() {
               Tax Invoice
             </h2>
             <p className="text-xs sm:text-sm">
-              Invoice No: {invoiceNo}
+              Invoice No: {invoice?.invoice?.invoiceNumber}
             </p>
             <p className="text-xs sm:text-sm">Date: {date}</p>
           </div>
@@ -348,10 +311,12 @@ export default function InvoicePreview() {
         {/* CUSTOMER DETAILS */}
         <div className="border rounded p-3 mb-4 text-xs sm:text-sm">
           <p>
-            <strong>Customer:</strong> {customerName}
+            <strong>Customer:</strong>
+             {invoice?.invoice?.customer?.name}
           </p>
           <p>
-            <strong>GST No:</strong> {customerGST}
+            <strong>GST No:</strong> 
+            {invoice?.invoice?._id}
           </p>
         </div>
 
@@ -423,6 +388,10 @@ export default function InvoicePreview() {
     </div>
   );
 }
+
+
+
+
 
 
 
