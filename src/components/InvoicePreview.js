@@ -242,6 +242,7 @@ import { useCart } from "@/context/CartContext";
 import { QRCodeCanvas } from "qrcode.react";
 
 
+
 export default function InvoicePreview() {
   const { cart, total, showInvoice, setShowInvoice } = useCart();
    const [invoice, setInvoice] = useState(null);
