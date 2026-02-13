@@ -1,25 +1,43 @@
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/db";
+import Invoice from "@/models/Invoice";
 
+// ✅ Allowed origins
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://smart-nithy.vercel.app",
+];
 
-import { NextResponse } from "next/server"; // ✅ REQUIRED
-import { connectDB } from "@/lib/db";        // ✅ REQUIRED
-import Invoice from "@/models/Invoice";      // ✅ REQUIRED
+// ✅ Common CORS headers function
+function getCorsHeaders(request) {
+  const origin = request.headers.get("origin");
 
+  return {
+    "Access-Control-Allow-Origin": allowedOrigins.includes(origin)
+      ? origin
+      : "http://localhost:3000",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+}
+
+// ✅ Handle Preflight Request
+export async function OPTIONS(request) {
+  return NextResponse.json({}, { headers: getCorsHeaders(request) });
+}
+
+// ✅ POST API
 export async function POST(request) {
   try {
     console.log("API HIT 🚀");
 
-    // ✅ DB connection
     await connectDB();
     console.log("DB CONNECTED ✅");
 
-    // ✅ Read request body
     const body = await request.json();
-    console.log("BODY 👉", body);
 
-    // ✅ Count invoices
     const invoiceCount = await Invoice.countDocuments();
 
-    // ✅ Create invoice
     const newInvoice = await Invoice.create({
       customer: body.customer,
       items: body.items,
@@ -33,7 +51,10 @@ export async function POST(request) {
         message: "Invoice saved successfully",
         invoice: newInvoice,
       },
-      { status: 201 }
+      {
+        status: 201,
+        headers: getCorsHeaders(request), // 🔥 VERY IMPORTANT
+      }
     );
   } catch (error) {
     console.error("API ERROR ❌", error);
@@ -43,25 +64,30 @@ export async function POST(request) {
         success: false,
         error: error.message,
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: getCorsHeaders(request), // 🔥 VERY IMPORTANT
+      }
     );
   }
 }
 
-
-// // ✅ GET LATEST INVOICE ONLY
-export async function GET() {
+// ✅ GET LATEST INVOICE
+export async function GET(request) {
   try {
     await connectDB();
 
     const latestInvoice = await Invoice.findOne()
-      .sort({ createdAt: -1 }) // 🔥 latest first
+      .sort({ createdAt: -1 })
       .lean();
 
     if (!latestInvoice) {
       return NextResponse.json(
         { success: false, message: "No invoices found" },
-        { status: 404 }
+        {
+          status: 404,
+          headers: getCorsHeaders(request),
+        }
       );
     }
 
@@ -70,15 +96,20 @@ export async function GET() {
         success: true,
         invoice: latestInvoice,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: getCorsHeaders(request), // 🔥 VERY IMPORTANT
+      }
     );
   } catch (error) {
     console.error("GET API ERROR ❌", error);
+
     return NextResponse.json(
       { success: false, error: error.message },
-      { status: 500 }
+      {
+        status: 500,
+        headers: getCorsHeaders(request), // 🔥 VERY IMPORTANT
+      }
     );
   }
 }
-
-
