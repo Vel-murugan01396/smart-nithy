@@ -1,5 +1,3 @@
-
-
 "use client";
 import { createContext, useContext, useState } from "react";
 
@@ -29,10 +27,22 @@ export function CartProvider({ children }) {
     );
   };
 
-  const total = cart.reduce(
+  // ✅ Subtotal
+  const subtotal = cart.reduce(
     (sum, item) => sum + item.price * item.qty,
     0
   );
+
+  // ✅ GST 18%
+  const gstRate = 0.18;
+  const gst = +(subtotal * gstRate).toFixed(2);
+
+  // ✅ Optional Split (India standard)
+  // const cgst = +(subtotal * 0.09).toFixed(2);
+  // const sgst = +(subtotal * 0.09).toFixed(2);
+
+  // ✅ Final Total
+  const total = +(subtotal + gst).toFixed(2);
 
   return (
     <CartContext.Provider
@@ -40,6 +50,8 @@ export function CartProvider({ children }) {
         cart,
         addToCart,
         removeItem,
+        subtotal,
+        gst,
         total,
         showInvoice,
         setShowInvoice,
