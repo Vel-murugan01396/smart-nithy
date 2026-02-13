@@ -6,7 +6,7 @@ import { QRCodeCanvas } from "qrcode.react";
 
 
 export default function InvoicePreview() {
-  const { cart, total, showInvoice, setShowInvoice } = useCart();
+  const { cart, total,gst,subtotal, showInvoice, setShowInvoice } = useCart();
    const [invoice, setInvoice] = useState(null);
 
  useEffect(() => {
@@ -14,7 +14,7 @@ export default function InvoicePreview() {
 
     const fetchingData = async () => {
       try {
-        const res = await fetch("/api/invoice");
+        const res = await fetch("/api/invoice?latest=true");
         const data = await res.json();
         setInvoice(data); 
         console.log("INVOICE DATA 👉", data);
@@ -33,10 +33,7 @@ export default function InvoicePreview() {
 
   const date = new Date().toLocaleDateString();
 
-  // 🔹 GST CALCULATION
-  const GST_PERCENT = 18;
-  const gstAmount = (total * GST_PERCENT) / 100;
-  const grandTotal = total + gstAmount;
+
 
   // 🔹 UPI DETAILS
   const upiId = "kingvel136@okicici";
@@ -44,7 +41,7 @@ export default function InvoicePreview() {
 
   const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(
     payeeName
-  )}&am=${grandTotal.toFixed(2)}&cu=INR`;
+  )}&am=${total.toFixed(2)}&cu=INR`;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
@@ -120,17 +117,17 @@ export default function InvoicePreview() {
         <div className="text-sm sm:text-base space-y-2 mb-4">
           <div className="flex justify-between">
             <span>Subtotal</span>
-            <span>₹{total.toFixed(2)}</span>
+            <span>₹{subtotal.toFixed(2)}</span>
           </div>
 
           <div className="flex justify-between">
             <span>GST (18%)</span>
-            <span>₹{gstAmount.toFixed(2)}</span>
+            <span>₹{gst.toFixed(2)}</span>
           </div>
 
           <div className="flex justify-between font-bold border-t pt-2">
             <span>Grand Total</span>
-            <span>₹{grandTotal.toFixed(2)}</span>
+            <span>₹{total.toFixed(2)}</span>
           </div>
         </div>
 
