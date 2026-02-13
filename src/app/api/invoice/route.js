@@ -42,6 +42,8 @@ export async function POST(request) {
       customer: body.customer,
       items: body.items,
       totalAmount: body.totalAmount,
+      gstAmount: body.gstAmount,
+      subTotalAmount: body.subTotalAmount,
       invoiceNumber: `INV-${invoiceCount + 1}`,
     });
 
